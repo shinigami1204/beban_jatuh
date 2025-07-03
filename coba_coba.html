@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perhitungan Beban Jatuh</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f2f5;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    .hasil {
+      margin-top: 20px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Perhitungan Jarak Beban Jatuh dari Pesawat</h2>
+
+  <label>Ketinggian Pesawat (meter):</label>
+  <input type="number" id="ketinggian" value="150">
+
+  <label>Kecepatan Pesawat (m/s):</label>
+  <input type="number" id="kecepatanPesawat" value="5.56">
+
+  <label>Kecepatan Angin (m/s):</label>
+  <input type="number" id="kecepatanAngin" value="5">
+
+  <button onclick="hitungJarak()">Hitung</button>
+
+  <div class="hasil" id="output"></div>
+
+  <script>
+    function hitungJarakHorizontal(h, v_horizontal) {
+      const g = 9.8;
+      const t = Math.sqrt((2 * h) / g);
+      const d = v_horizontal * t;
+      return { d, t };
+    }
+
+    function hitungJarak() {
+      const h = parseFloat(document.getElementById("ketinggian").value);
+      const vPesawat = parseFloat(document.getElementById("kecepatanPesawat").value);
+      const vAngin = parseFloat(document.getElementById("kecepatanAngin").value);
+
+      const noWind = hitungJarakHorizontal(h, vPesawat);
+      const upwind = hitungJarakHorizontal(h, vPesawat - vAngin);
+      const downwind = hitungJarakHorizontal(h, vPesawat + vAngin);
+
+      const output = `
+        <strong>Hasil Perhitungan:</strong><br>
+        Waktu jatuh bebas: ${noWind.t.toFixed(2)} detik<br>
+        Jarak horizontal (tanpa angin): ${noWind.d.toFixed(2)} m<br>
+        Jarak horizontal (upwind): ${upwind.d.toFixed(2)} m<br>
+        Jarak horizontal (downwind): ${downwind.d.toFixed(2)} m<br><br>
+        <em>Catatan:</em><br>
+        - Upwind = angin melawan arah pesawat (jarak lebih pendek)<br>
+        - Downwind = angin searah pesawat (jarak lebih jauh)
+      `;
+
+      document.getElementById("output").innerHTML = output;
+    }
+  </script>
+</body>
+</html>
